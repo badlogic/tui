@@ -22,8 +22,10 @@ export class MarkdownComponent implements Component {
 		// Convert tokens to styled terminal output
 		const renderedLines: string[] = [];
 
-		for (const token of tokens) {
-			const tokenLines = this.renderToken(token, width);
+		for (let i = 0; i < tokens.length; i++) {
+			const token = tokens[i];
+			const nextToken = tokens[i + 1];
+			const tokenLines = this.renderToken(token, width, nextToken?.type);
 			renderedLines.push(...tokenLines);
 		}
 
@@ -47,7 +49,7 @@ export class MarkdownComponent implements Component {
 		};
 	}
 
-	private renderToken(token: Token, width: number): string[] {
+	private renderToken(token: Token, width: number, nextTokenType?: string): string[] {
 		const lines: string[] = [];
 
 		switch (token.type) {
@@ -69,7 +71,10 @@ export class MarkdownComponent implements Component {
 			case "paragraph": {
 				const paragraphText = this.renderInlineTokens(token.tokens || []);
 				lines.push(paragraphText);
-				lines.push(""); // Add spacing after paragraphs
+				// Only add spacing if next element is not a list
+				if (nextTokenType !== "list") {
+					lines.push("");
+				}
 				break;
 			}
 
@@ -88,11 +93,10 @@ export class MarkdownComponent implements Component {
 			case "list":
 				for (let i = 0; i < token.items.length; i++) {
 					const item = token.items[i];
-					const bullet = token.ordered ? `${i + 1}. ` : "• ";
+					const bullet = token.ordered ? `${i + 1}. ` : "- ";
 					const itemText = this.renderInlineTokens(item.tokens || []);
 					lines.push(chalk.cyan(bullet) + itemText);
 				}
-				lines.push(""); // Add spacing after lists
 				break;
 
 			case "blockquote": {
