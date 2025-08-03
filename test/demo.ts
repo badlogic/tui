@@ -40,6 +40,26 @@ ui.addChild(editor);
 // Set focus to the editor (index 2)
 ui.setFocus(editor);
 
+// Test with Claude's multiline text
+const testText = `Root level:
+- CLAUDE.md
+- README.md
+- biome.json
+- package.json
+- package-lock.json
+- tsconfig.json
+- tui-debug.log
+
+Directories:
+- \`data/\` (JSON test files)
+- \`dist/\` 
+- \`docs/\` (markdown documentation)
+- \`node_modules/\`
+- \`src/\` (TypeScript source files)`;
+
+// Pre-fill the editor with the test text
+editor.setText(testText);
+
 // Handle editor submissions
 editor.onSubmit = (text: string) => {
 	text = text.trim();
