@@ -119,8 +119,7 @@ export class MarkdownComponent implements Component {
 				break;
 
 			case "space":
-				// Preserve spacing
-				lines.push("");
+				// Skip space tokens - they're handled by adjacent elements
 				break;
 
 			default:
@@ -139,7 +138,12 @@ export class MarkdownComponent implements Component {
 		for (const token of tokens) {
 			switch (token.type) {
 				case "text":
-					result += token.text;
+					// Text tokens in list items can have nested tokens for inline formatting
+					if (token.tokens && token.tokens.length > 0) {
+						result += this.renderInlineTokens(token.tokens);
+					} else {
+						result += token.text;
+					}
 					break;
 
 				case "strong":
