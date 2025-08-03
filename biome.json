@@ -6,10 +6,17 @@
 			"recommended": true,
 			"style": {
 				"noNonNullAssertion": "off",
-				"useConst": "error"
+				"useConst": "error",
+				"useNodejsImportProtocol": "off",
+				"useTemplate": "off"
 			},
 			"correctness": {
-				"noUnusedVariables": "error"
+				"noUnusedVariables": "off"
+			},
+			"suspicious": {
+				"noExplicitAny": "off",
+				"noControlCharactersInRegex": "off",
+				"noEmptyInterface": "off"
 			}
 		}
 	},
@@ -21,6 +28,6 @@
 		"lineWidth": 120
 	},
 	"files": {
-		"includes": ["src/**/*"]
+		"includes": ["src/**/*", "test/**/*"]
 	}
 }

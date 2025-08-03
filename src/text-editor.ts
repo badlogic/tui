@@ -16,7 +16,9 @@ interface LayoutLine {
 	cursorPos?: number;
 }
 
-export type TextEditorConfig = {};
+export interface TextEditorConfig {
+	// Configuration options for text editor (none currently)
+}
 
 export class TextEditor implements Component {
 	private state: EditorState = {

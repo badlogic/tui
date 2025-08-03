@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 
-import { TUI, Container, TextComponent, TextEditor, MarkdownComponent, CombinedAutocompleteProvider } from "../src/index.js";
+import {
+	CombinedAutocompleteProvider,
+	Container,
+	MarkdownComponent,
+	TextComponent,
+	TextEditor,
+	TUI,
+} from "../src/index.js";
 
 // Create TUI manager
 const ui = new TUI();
@@ -8,18 +15,21 @@ ui.configureLogging({
 	enabled: true,
 	logLevel: "debug",
 	logFile: "tui-debug.log",
-})
+});
 
 // Create a chat container that will hold messages
 const chatContainer = new Container();
 const editor = new TextEditor();
 
 // Set up autocomplete with slash commands
-const autocompleteProvider = new CombinedAutocompleteProvider([
-	{ name: "clear", description: "Clear chat history" },
-	{ name: "clear-last", description: "Clear last message" },
-	{ name: "exit", description: "Exit the application" },
-], process.cwd());
+const autocompleteProvider = new CombinedAutocompleteProvider(
+	[
+		{ name: "clear", description: "Clear chat history" },
+		{ name: "clear-last", description: "Clear last message" },
+		{ name: "exit", description: "Exit the application" },
+	],
+	process.cwd(),
+);
 editor.setAutocompleteProvider(autocompleteProvider);
 
 // Add components to UI
