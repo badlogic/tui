@@ -119,8 +119,12 @@ export class Container {
 				if (!changed && !result.changed) {
 					keepLines += result.lines.length;
 				} else {
-					changed = true;
-					keepLines += result.keepLines;
+					if (!changed) {
+						// First change - use the child's keepLines
+						changed = true;
+						keepLines += result.keepLines;
+					}
+					// After first change, don't add any more keepLines
 				}
 			} else {
 				const result = child.render(width);
@@ -128,7 +132,11 @@ export class Container {
 				if (!changed && !result.changed) {
 					keepLines += result.lines.length;
 				} else {
-					changed = true;
+					if (!changed) {
+						// First change for a non-container component
+						changed = true;
+					}
+					// After first change, don't add any more keepLines
 				}
 			}
 		}

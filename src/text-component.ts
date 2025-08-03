@@ -35,18 +35,24 @@ export class TextComponent implements Component {
 				// Preserve empty lines with padding
 				lines.push(leftPadding);
 			} else {
-				// Simple text wrapping for this line
+				// Word wrapping with ANSI-aware length calculation
 				const words = textLine.split(" ");
 				let currentLine = "";
+				let currentVisibleLength = 0;
 
 				for (const word of words) {
-					if (currentLine.length + word.length + 1 <= availableWidth) {
+					const wordVisibleLength = this.getVisibleLength(word);
+					const spaceLength = currentLine ? 1 : 0;
+
+					if (currentVisibleLength + spaceLength + wordVisibleLength <= availableWidth) {
 						currentLine += (currentLine ? " " : "") + word;
+						currentVisibleLength += spaceLength + wordVisibleLength;
 					} else {
 						if (currentLine) {
 							lines.push(leftPadding + currentLine);
 						}
 						currentLine = word;
+						currentVisibleLength = wordVisibleLength;
 					}
 				}
 
@@ -89,5 +95,10 @@ export class TextComponent implements Component {
 			if (a[i] !== b[i]) return false;
 		}
 		return true;
+	}
+
+	private getVisibleLength(str: string): number {
+		// Remove ANSI escape codes and count visible characters
+		return (str || "").replace(/\x1b\[[0-9;]*m/g, "").length;
 	}
 }
