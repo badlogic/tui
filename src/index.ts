@@ -25,3 +25,5 @@ export {
 	type Padding,
 	TUI,
 } from "./tui.js";
+// Whitespace component
+export { WhitespaceComponent } from "./whitespace-component.js";

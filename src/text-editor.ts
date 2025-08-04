@@ -37,6 +37,7 @@ export class TextEditor implements Component {
 
 	public onSubmit?: (text: string) => void;
 	public onChange?: (text: string) => void;
+	public disableSubmit: boolean = false;
 
 	constructor(config?: TextEditorConfig) {
 		if (config) {
@@ -254,6 +255,11 @@ export class TextEditor implements Component {
 		}
 		// Plain Enter (char code 13 for CR) - only CR submits, LF adds new line
 		else if (data.charCodeAt(0) === 13 && data.length === 1) {
+			// If submit is disabled, do nothing
+			if (this.disableSubmit) {
+				return;
+			}
+
 			// Plain Enter = submit
 			const result = this.state.lines.join("\n").trim();
 			logger.info("TextEditor", "Submit triggered", {

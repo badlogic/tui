@@ -220,6 +220,7 @@ export class TUI extends Container {
 	private totalLines: number = 0;
 	private isFirstRender: boolean = true;
 	private isStarted: boolean = false;
+	public onGlobalKeyPress?: (data: string) => boolean;
 
 	constructor() {
 		super(); // No parent TUI for root
@@ -443,6 +444,16 @@ export class TUI extends Container {
 			logger.info("TUI", "Ctrl+C received, stopping TUI");
 			this.stop();
 			process.exit(0);
+		}
+
+		// Call global key handler if set
+		if (this.onGlobalKeyPress) {
+			const shouldForward = this.onGlobalKeyPress(data);
+			if (!shouldForward) {
+				// Global handler consumed the key, don't forward to focused component
+				this.requestRender();
+				return;
+			}
 		}
 
 		// Send input to focused component

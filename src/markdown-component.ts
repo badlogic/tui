@@ -71,8 +71,8 @@ export class MarkdownComponent implements Component {
 			case "paragraph": {
 				const paragraphText = this.renderInlineTokens(token.tokens || []);
 				lines.push(paragraphText);
-				// Only add spacing if next element is not a list
-				if (nextTokenType !== "list") {
+				// Don't add spacing if next token is space or list
+				if (nextTokenType && nextTokenType !== "list" && nextTokenType !== "space") {
 					lines.push("");
 				}
 				break;
@@ -83,7 +83,7 @@ export class MarkdownComponent implements Component {
 				// Split code by newlines and style each line
 				const codeLines = token.text.split("\n");
 				for (const codeLine of codeLines) {
-					lines.push(chalk.bgGray.white(" " + codeLine + " "));
+					lines.push(chalk.dim("  ") + chalk.green(codeLine));
 				}
 				lines.push(chalk.gray("```"));
 				lines.push(""); // Add spacing after code blocks
@@ -95,8 +95,23 @@ export class MarkdownComponent implements Component {
 					const item = token.items[i];
 					const bullet = token.ordered ? `${i + 1}. ` : "- ";
 					const itemText = this.renderInlineTokens(item.tokens || []);
-					lines.push(chalk.cyan(bullet) + itemText);
+
+					// Check if the item text contains multiple lines (embedded content)
+					const itemLines = itemText.split("\n").filter((line) => line.trim());
+					if (itemLines.length > 1) {
+						// First line is the list item
+						lines.push(chalk.cyan(bullet) + itemLines[0]);
+						// Rest are treated as separate content
+						for (let j = 1; j < itemLines.length; j++) {
+							lines.push(""); // Add spacing
+							lines.push(itemLines[j]);
+						}
+					} else {
+						lines.push(chalk.cyan(bullet) + itemText);
+					}
 				}
+				// Don't add spacing after lists if a space token follows
+				// (the space token will handle it)
 				break;
 
 			case "blockquote": {
@@ -119,7 +134,8 @@ export class MarkdownComponent implements Component {
 				break;
 
 			case "space":
-				// Skip space tokens - they're handled by adjacent elements
+				// Space tokens represent blank lines in markdown
+				lines.push("");
 				break;
 
 			default:
@@ -155,7 +171,7 @@ export class MarkdownComponent implements Component {
 					break;
 
 				case "codespan":
-					result += chalk.bgGray.white(` ${token.text} `);
+					result += chalk.gray("`") + chalk.cyan(token.text) + chalk.gray("`");
 					break;
 
 				case "link": {
