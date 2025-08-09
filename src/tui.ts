@@ -439,12 +439,11 @@ export class TUI extends Container {
 	private handleKeypress(data: string): void {
 		logger.keyInput("TUI", data);
 
-		// Handle Ctrl+C at TUI level
-		if (data.charCodeAt(0) === 3) {
-			logger.info("TUI", "Ctrl+C received, stopping TUI");
-			this.stop();
-			process.exit(0);
-		}
+		// Don't handle Ctrl+C here - let the global key handler deal with it
+		// if (data.charCodeAt(0) === 3) {
+		// 	logger.info("TUI", "Ctrl+C received");
+		// 	return; // Don't process this key further
+		// }
 
 		// Call global key handler if set
 		if (this.onGlobalKeyPress) {
